@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px; /* Increased container width for a larger map */
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        #world-map {
+            width: 100%;
+            height: 800px; /* Increased map height */
+            margin-top: 20px; /* Added margin for better spacing */
+        }
+          
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Carbon Emission Dashboard</h1>
+        <div id="world-map"></div>
+    </div>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sample data
+            var data = {
+                'Country': ['USA', 'China', 'India', 'Brazil', 'Russia', 'Pakistan', 'Japan', 'Germany', 'Canada', 'Iran','South Korea', 'Indonesia', 'Saudi Arabia', 'Mexico', 'Australia', 'South Africa', 'Turkey', 'United Kingdom', 'Italy', 'France', 'Poland', 'Taiwan', 'Thailand', 'Malaysia', 'Spain', 'Ukraine', 'Kazakhstan', 'Egypt', 'United Arab Emirates', 'Vietnam', 'Argentina', 'Venezuela', 'Netherlands', 'Iraq', 'Algeria', 'Philippines', 'Czech Republic', 'Uzbekistan', 'Kuwait', 'Qatar', 'Belgium', 'Oman', 'Nigeria', 'Chile', 'Turkmenistan', 'Romaina', 'Colombia', 'Bangladesh', 'Austria', 'Greece', 'Israel', 'Belarus', 'North Korea', 'Morocoo', 'Peru', 'Libya', 'Finland', 'Hungary', 'Bulgaria', 'Portugal', 'Singapore', 'Hong Kong', 'Sweden', 'Norway', 'Serbia', 'Ecuador', 'Switzerland', 'Ireland', 'Syria', 'Denmark', 'Slovakia', 'Trinidad and Tobago', 'Azerbaijan', 'New Zealand', 'Angola', 'Cuba', 'Tunisia', 'Bosnia and Herzegovina', 'Yemen', 'Bahrain', 
+                'Dominican Republic', 'Jordan', 'Estonia', 'Lebanon', 'Bolivia', 'Croatia', 'Mongolia', 'Guatemala', 'Sri Lanka', 'Myanmar', 'Kenya', 'Montenegro', 'Slovenia', 'Ghana', 'Lithuania', 'Sudan', 'Panama', 'Ethiopia', 'Luxembourg', 'Zimbabwe', 'Côte d Ivoire', 'Afghanistan', 'Tanzania', 'Cameroon', 'Honduras', 'Papua New Guinea', 'Jamaica', 'North Macedonia', 'Georgia', 'Costa Rica', 'Moldova', 'Senegal', 'Latvia', 'Nepal', 'Brunei', 'Kyrgyzstan', 'Cyprus', 'El Salvador', 'DR Congo', 'Benin', 'Uruguay', 'Cambodia', 'Botswana', 'Tajikistan', 'Paraguy', 'Mozambique', 'Gabon', 'Nicaragua', 'Congo', 'Albania', 'Uganda', 'Armenia', 'Laos', 'Bahamas', 'Zambia', 'South Sudan', 'Iceland', 'Namibia', 'Guyana', 'Mauritius', 'Macao', 'Haiti', 'Madagascar', 'Martinique', 'Mauritania', 'Guadeloupe', 'Burkina Faso', 'New Caledonia', 'Togo', 'Malta', 'Equatorial Guinea', 'Suirname', 'Niger', 'Guinea', 'Malawi', 'Fiji', 'Bhutan', 'Chad', 'Mali', 'Barbados', 'Djibouti', 'French Guiana', 'Rwanda', 'Sierra Leone', 'Somalia', 'Maldives', 'Réunion', 'Belize', 'Burundi', 'French Polynesia', 'Liberia', 'Puerto Rico', 'Eritera', 'Eswatini', 'Bermuda', 'Saint Lucia', 'Gibraltar', 'Grenada', 'Central African Republic', 'Seychelles', 'Timor-Leste', 'Antigua and Barbuda', 'Cayman Islands', 'St. Vincent & Grenadines', 'Solomon Islands', 'Guinea-Bissau', 'Leostho', 'Aruba', 'Gambia', 'Tonga', 'Western Sahara', 'Saint Kitts & Nevis', 'Dominicia', 'Samoa', 'Vanuatu', 'Comoros', 'British Virgin Islands', 'Cabo Verde', 'Turks and Caicos', 'Sao Tome & Principe', 'Kiribati', 'Falkland Islands', 'Palau', 'Cook Islands', 'Anguilla', 'Saint Helena', 'Saint Pierre & Miquelon', 'Faeroe Islands', 'Greenland'],
+        'Carbon_Emission_Per_Capita': [15.32, 7.44, 1.89, 11.45, 2.24, 0.83, 9.76, 9.42, 18.72, 7.71, 11.77, 2.02, 15.47, 3.63, 17.15, 6.92, 4.54, 5.60, 5.96, 5.18, 7.70, 11.73, 3.84, 8.45, 5.42, 5.20, 12.83, 2.20, 24.33, 2.21, 4.60, 5.72, 9.54, 4.20, 3.87, 1.21, 10.62, 3.48, 25.07, 38.14, 8.37, 19.97, 0.44, 4.49, 13.51, 3.98, 1.63, 0.47, 8.44, 6.31, 7.99, 6.45, 2.31, 1.64, 1.85, 8.39, 9.31, 5.20, 7.02, 4.85, 8.47, 6.33, 4.49, 8.30, 5.49, 2.44, 4.74, 8.29, 2.01, 6.66, 6.78, 23.80, 3.37, 7.13, 1.05, 2.68, 2.52, 7.38, 0.88, 17.35, 2.23, 2.29, 17.02, 3.49, 1.73, 4.60, 6.13, 1.14, 0.86, 0.32, 0.34, 25.66, 7.04, 0.49, 4.66, 0.34, 2.88, 0.10, 17.39, 0.70, 0.42, 0.29, 0.18, 0.40, 0.99, 1.02, 3.19, 4.22, 2.28, 1.68, 2.56, 0.56, 4.13, 0.28, 18.01, 1.15, 5.74, 1.10, 0.08, 0.58, 1.91, 0.42, 2.74, 0.69, 0.96, 0.21, 2.73, 0.83, 1.00, 1.81, 0.13, 1.60, 0.66, 11.12, 0.25, 0.36, 11.69, 1.68, 4.29, 2.47, 4.96, 0.29, 0.12, 7.14, 0.63, 6.23, 0.12, 8.24, 0.30, 4.83, 1.54, 3.70, 0.10, 0.17, 0.10, 1.85, 2.24, 0.11, 0.09, 5.53, 1.47, 5.61, 0.12, 0.17, 0.09, 2.71, 1.22, 3.03, 0.10, 3.42, 0.18, 0.21, 0.20, 0.58, 10.14, 3.45, 17.59, 4.63, 0.11, 5.17, 0.40, 4.84, 6.52, 3.42, 0.54, 0.17, 0.15, 2.74, 0.11, 2.38, 0.41, 4.25, 2.65, 0.83, 0.49, 0.15, 3.35, 0.18, 1.71, 0.27, 0.45, 13.84, 2.34, 2.13, 2.04, 2.38, 1.48, 0.04, 0.03]
+        
+            };
+        
+            // Create a trace for the choropleth map
+            var trace = {
+                type: 'choropleth',
+                locationmode: 'country names',
+                locations: data.Country,
+                z: data.Carbon_Emission_Per_Capita,
+                text: data.Country,
+                colorscale: 'Viridis',
+                colorbar: {
+                    title: 'Carbon Emission Per Capita',
+                    tickvals: [0, 10, 20],
+                    ticktext: ['Low', 'Medium', 'High'],
+                }
+            };
+        
+            // Create layout for the map
+            var layout = {
+                title: 'Carbon Emission by Country',
+                geo: {
+                    projection: { type: 'mercator' },
+                },
+                height: 400, // Set the initial height of the map (adjust as needed)
+                width: '100%' // Set the initial width of the map to 100%
+            };
+        
+            // Create a Plotly graph
+            Plotly.newPlot('world-map', [trace], layout);
+        });
+        
+    </script>
+</body>
+</html>
